@@ -1,4 +1,15 @@
-﻿using Discord;
+﻿/*
+ * File: Program.cs
+ * Purpose: Application entrypoint and main orchestrator.
+ * Role: Initializes and launches the core BotService, then blocks execution.
+ * Interacts with:
+ *  - BotService: Delegates all bot startup and Discord logic.
+ * Notes:
+ *  - Should remain minimal and purely orchestration-focused.
+ *  - Never interacts directly with commands, services, or Discord API.
+*/
+
+using Discord;
 using Discord.WebSocket;
 
 public class Program
