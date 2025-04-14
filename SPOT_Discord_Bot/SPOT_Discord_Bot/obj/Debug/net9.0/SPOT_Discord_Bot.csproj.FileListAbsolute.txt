@@ -26,3 +26,15 @@ C:\Users\Brayan\Desktop\SPOT\SPOT_Discord_Bot\SPOT_Discord_Bot\obj\Debug\net9.0\
 C:\Users\Brayan\Desktop\SPOT\SPOT_Discord_Bot\SPOT_Discord_Bot\obj\Debug\net9.0\SPOT_Discord_Bot.pdb
 C:\Users\Brayan\Desktop\SPOT\SPOT_Discord_Bot\SPOT_Discord_Bot\obj\Debug\net9.0\SPOT_Discord_Bot.genruntimeconfig.cache
 C:\Users\Brayan\Desktop\SPOT\SPOT_Discord_Bot\SPOT_Discord_Bot\obj\Debug\net9.0\ref\SPOT_Discord_Bot.dll
+C:\Users\Brayan\Desktop\SPOT\SPOT_Discord_Bot\SPOT_Discord_Bot\bin\Debug\net9.0\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\Brayan\Desktop\SPOT\SPOT_Discord_Bot\SPOT_Discord_Bot\bin\Debug\net9.0\Microsoft.Extensions.Logging.dll
+C:\Users\Brayan\Desktop\SPOT\SPOT_Discord_Bot\SPOT_Discord_Bot\bin\Debug\net9.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\Brayan\Desktop\SPOT\SPOT_Discord_Bot\SPOT_Discord_Bot\bin\Debug\net9.0\Microsoft.Extensions.Options.dll
+C:\Users\Brayan\Desktop\SPOT\SPOT_Discord_Bot\SPOT_Discord_Bot\bin\Debug\net9.0\Microsoft.Extensions.Primitives.dll
+C:\Users\Brayan\Desktop\SPOT\SPOT_Discord_Bot\SPOT_Discord_Bot\obj\Debug\net9.0\SPOT_Discord_Bot.sourcelink.json
+C:\Users\Brayan\Desktop\SPOT\SPOT_Discord_Bot\SPOT_Discord_Bot\bin\Debug\net9.0\Microsoft.Extensions.Configuration.dll
+C:\Users\Brayan\Desktop\SPOT\SPOT_Discord_Bot\SPOT_Discord_Bot\bin\Debug\net9.0\Microsoft.Extensions.Configuration.Abstractions.dll
+C:\Users\Brayan\Desktop\SPOT\SPOT_Discord_Bot\SPOT_Discord_Bot\bin\Debug\net9.0\Microsoft.Extensions.Configuration.Binder.dll
+C:\Users\Brayan\Desktop\SPOT\SPOT_Discord_Bot\SPOT_Discord_Bot\bin\Debug\net9.0\Microsoft.Extensions.Logging.Configuration.dll
+C:\Users\Brayan\Desktop\SPOT\SPOT_Discord_Bot\SPOT_Discord_Bot\bin\Debug\net9.0\Microsoft.Extensions.Logging.Console.dll
+C:\Users\Brayan\Desktop\SPOT\SPOT_Discord_Bot\SPOT_Discord_Bot\bin\Debug\net9.0\Microsoft.Extensions.Options.ConfigurationExtensions.dll

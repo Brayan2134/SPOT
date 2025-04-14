@@ -12,7 +12,77 @@
 
 namespace SPOT_Discord_Bot;
 
+using System;
+using System.Threading.Tasks;
+using Discord;
+using Discord.WebSocket;
+using Microsoft.Extensions.Logging;
+
 public class BotService
 {
+    // Main Discord client that handles connection, events, and messages
+    private readonly DiscordSocketClient _client;
     
+    // Structured logger instance scoped to this class
+    private readonly ILogger<BotService> _logger;
+
+    // Constructor for BotService. Sets up the Discord client and stores the injected logger.
+    // Logger instance from Program.cs for structured output
+    public BotService(ILogger<BotService> logger)
+    {
+        _logger = logger;
+
+        // Initialize the Discord client with selected gateway intents
+        _client = new DiscordSocketClient(new DiscordSocketConfig
+        {
+            GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMessages
+        });
+
+        _logger.LogInformation("BotService instantiated with configured GatewayIntents.");
+    }
+
+    // Connects the bot to Discord, handles login, event hooks, and readiness.
+    public async Task InitializeAsync()
+    {
+        // Bind Discord's internal logging to our custom logging system
+        _client.Log += HandleDiscordLog;
+
+        // Load token securely from environment variable
+        var token = Environment.GetEnvironmentVariable("DISCORD_TOKEN");
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            _logger.LogError("DISCORD_TOKEN environment variable not found.");
+            return;
+        }
+
+        _logger.LogInformation("Logging into Discord...");
+        await _client.LoginAsync(TokenType.Bot, token);
+        await _client.StartAsync();
+
+        // Hook into the 'Ready' event to confirm successful connection
+        _client.Ready += async () =>
+        {
+            _logger.LogInformation("Bot is connected and ready.");
+        };
+    }
+
+    // Translates Discord.NET log messages into structured .NET logs.
+    private Task HandleDiscordLog(LogMessage msg)
+    {
+        // Map Discord log severity to .NET log levels
+        LogLevel level = msg.Severity switch
+        {
+            LogSeverity.Critical => LogLevel.Critical,
+            LogSeverity.Error => LogLevel.Error,
+            LogSeverity.Warning => LogLevel.Warning,
+            LogSeverity.Info => LogLevel.Information,
+            LogSeverity.Verbose => LogLevel.Debug,
+            LogSeverity.Debug => LogLevel.Trace,
+            _ => LogLevel.Information
+        };
+
+        // Write the log using the structured logger
+        _logger.Log(level, msg.Exception, msg.Message);
+        return Task.CompletedTask;
+    }
 }
