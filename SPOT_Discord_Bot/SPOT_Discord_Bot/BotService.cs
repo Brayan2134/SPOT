@@ -10,6 +10,8 @@
  *   - Extensible to include dependency injection or service registration later
  */
 
+using Discord.Interactions;
+
 namespace SPOT_Discord_Bot;
 
 using System;
@@ -44,10 +46,8 @@ public class BotService
     // Connects the bot to Discord, handles login, event hooks, and readiness.
     public async Task InitializeAsync()
     {
-        // Bind Discord's internal logging to our custom logging system
         _client.Log += HandleDiscordLog;
 
-        // Load token securely from environment variable
         var token = Environment.GetEnvironmentVariable("DISCORD_TOKEN");
         if (string.IsNullOrWhiteSpace(token))
         {
@@ -55,16 +55,21 @@ public class BotService
             return;
         }
 
-        _logger.LogInformation("Logging into Discord...");
+        var interactionService = new InteractionService(_client.Rest);
+        var interactionHandler = new InteractionHandler(_client, interactionService, _logger);
+
+        await interactionHandler.InitializeAsync();
+
         await _client.LoginAsync(TokenType.Bot, token);
         await _client.StartAsync();
 
-        // Hook into the 'Ready' event to confirm successful connection
         _client.Ready += async () =>
         {
             _logger.LogInformation("Bot is connected and ready.");
+            await interactionService.RegisterCommandsGloballyAsync();
         };
     }
+
 
     // Translates Discord.NET log messages into structured .NET logs.
     private Task HandleDiscordLog(LogMessage msg)

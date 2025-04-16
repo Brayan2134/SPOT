@@ -9,9 +9,17 @@
  *   - Should remain purely UI-layer (Discord objects only)
  *   - Avoids direct service access — all logic goes through CommandInterface
  */
+using Discord;
+using Discord.Interactions;
+using System.Threading.Tasks;
+
 namespace SPOT_Discord_Bot.Modules;
 
-public class VibeModule
+public class VibeModule : InteractionModuleBase<SocketInteractionContext>
 {
-    
+    [SlashCommand("vibe", "Send a vibe and get a reply!")]
+    public async Task HandleVibeCommand([Summary(description: "What kind of vibe are you feeling?")] string query)
+    {
+        await RespondAsync($"🎵 Got your vibe: **{query}**");
+    }
 }
