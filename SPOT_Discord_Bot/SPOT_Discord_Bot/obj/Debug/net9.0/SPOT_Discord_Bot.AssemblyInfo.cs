@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SPOT_Discord_Bot")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+824082b0f8db1ede37903900621a749f9518bc43")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c0235f17a2514d3a62daf01b4b1a0bda80d72d70")]
 [assembly: System.Reflection.AssemblyProductAttribute("SPOT_Discord_Bot")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SPOT_Discord_Bot")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

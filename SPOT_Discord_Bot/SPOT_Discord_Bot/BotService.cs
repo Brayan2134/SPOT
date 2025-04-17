@@ -9,16 +9,13 @@
  *   - Contains logging hooks for Discord.NET events
  *   - Extensible to include dependency injection or service registration later
  */
-
-using Discord.Interactions;
-
-namespace SPOT_Discord_Bot;
-
-using System;
-using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
+using Discord.Interactions;
+using SPOT_Discord_Bot.Modules;
+
+namespace SPOT_Discord_Bot;
 
 public class BotService
 {
@@ -27,12 +24,15 @@ public class BotService
     
     // Structured logger instance scoped to this class
     private readonly ILogger<BotService> _logger;
+    
+    private readonly ILoggerFactory _loggerFactory;
 
     // Constructor for BotService. Sets up the Discord client and stores the injected logger.
     // Logger instance from Program.cs for structured output
-    public BotService(ILogger<BotService> logger)
+    public BotService(ILoggerFactory loggerFactory)
     {
-        _logger = logger;
+        _loggerFactory = loggerFactory;
+        _logger = loggerFactory.CreateLogger<BotService>();
 
         // Initialize the Discord client with selected gateway intents
         _client = new DiscordSocketClient(new DiscordSocketConfig
@@ -57,7 +57,9 @@ public class BotService
 
         var interactionService = new InteractionService(_client.Rest);
         var interactionHandler = new InteractionHandler(_client, interactionService, _logger);
-
+        var vibeLogger = _loggerFactory.CreateLogger<VibeModule>();
+        
+        SPOT_Discord_Bot.Modules.VibeModule.Logger = vibeLogger;
         await interactionHandler.InitializeAsync();
 
         await _client.LoginAsync(TokenType.Bot, token);
