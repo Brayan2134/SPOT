@@ -20,6 +20,6 @@ public class VibeModule : InteractionModuleBase<SocketInteractionContext>
     [SlashCommand("vibe", "Send a vibe and get a reply!")]
     public async Task HandleVibeCommand([Summary(description: "What kind of vibe are you feeling?")] string query)
     {
-        await RespondAsync($"🎵 Got your vibe: **{query}**");
+        await RespondAsync($"Got your vibe: **{query}**");
     }
 }

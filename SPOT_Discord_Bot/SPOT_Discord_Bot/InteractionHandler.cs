@@ -41,8 +41,8 @@ public class InteractionHandler
 
             if (!result.IsSuccess)
             {
-                _logger.LogWarning($"❌ Command failed: {result.ErrorReason}");
-                await interaction.RespondAsync("Something went wrong 😢", ephemeral: true);
+                _logger.LogWarning($"Command failed: {result.ErrorReason}");
+                await interaction.RespondAsync("Something went wrong: ", ephemeral: true);
             }
         };
     }

@@ -34,7 +34,7 @@ public class Program
         // STEP 2: Create a logger for Program.cs
         // Logs written here will be tagged with the context "Program"
         var logger = loggerFactory.CreateLogger<Program>();
-        logger.LogInformation("🔧 Logger initialized.");
+        logger.LogInformation("Logger initialized.");
 
         // STEP 3: Instantiate the core bot logic layer (BotService)
         // This class manages the Discord client, command handler, and service bootstrapping
