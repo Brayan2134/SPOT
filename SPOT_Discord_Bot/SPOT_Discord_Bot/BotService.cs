@@ -67,11 +67,14 @@ public class BotService
         var vibeLogger = _loggerFactory.CreateLogger<VibeModule>();
         var openAiLogger = _loggerFactory.CreateLogger<OpenAIService>();
         var commandLogger = _loggerFactory.CreateLogger<CommandInterface>();
+        var spotifyLogger = _loggerFactory.CreateLogger<SpotifyService>();
         
         // STEP 4: Manually instantiate services (OpenAI -> CommandInterface)
         // NOTE: This bypasses dependency injection but keeps it modular and testable
         var openAiService = new OpenAIService(openAiLogger);
-        var commandInterface = new CommandInterface(openAiService, commandLogger);
+        var spotifyService = new SpotifyService(spotifyLogger);
+        spotifyService.LoadAccessTokenFromFile();
+        var commandInterface = new CommandInterface(openAiService, spotifyService, commandLogger);
         
         // STEP 5: Assign the static logger for the VibeModule (Discord-facing commands)
         SPOT_Discord_Bot.Modules.VibeModule.Logger = vibeLogger;

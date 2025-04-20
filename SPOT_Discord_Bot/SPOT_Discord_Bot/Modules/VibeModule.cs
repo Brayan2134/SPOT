@@ -56,8 +56,11 @@ public class VibeModule : InteractionModuleBase<SocketInteractionContext>
             // Tell Discord "Hang tight, I’m working on it" to not timeout after 3 seconds
             await DeferAsync(ephemeral: false);
             
+            // Backend request to get list of track links
+            var trackList = await CommandInterface!.HandleVibeAsync(request);
+            
             // Backend request to expand the user query using OpenAI API
-            string reply = await CommandInterface!.HandleVibeAsync(request);
+            string reply = string.Join("\n", trackList);
             
             // Always respond to avoid a Discord timeout!!
             await FollowupAsync($"Here's your expanded vibe:\n{reply}");

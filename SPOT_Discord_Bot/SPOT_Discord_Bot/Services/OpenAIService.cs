@@ -100,7 +100,7 @@ public class OpenAIService
             string jsonPayload = JsonSerializer.Serialize(requestBody);
             
             // STEP 6: Log the outgoing request for observability
-            _logger.LogInformation("Sending prompt to OpenAI for user {User}: {Prompt}", request.Username, fullPrompt);
+            _logger.LogInformation("Sending prompt to OpenAI for user {User}: {Prompt}", request.Username, fullPrompt.Substring(0,10) + "...");
 
             // STEP 7: Send the POST request to OpenAI
             var response = await _httpClient.PostAsync("https://api.openai.com/v1/chat/completions",
@@ -132,7 +132,8 @@ public class OpenAIService
             }
 
             // STEP 12: Log and return the final expanded result
-            _logger.LogInformation("OpenAI reply for {User}: {Reply}", request.Username, reply.Trim());
+            _logger.LogInformation("OpenAI reply for {User}: {Reply}", request.Username, reply.Substring(0,10) + "...");
+            _logger.LogDebug("Full GPT output:\n{FullReply}", reply);
             return reply.Trim();
         }
         catch (Exception ex)

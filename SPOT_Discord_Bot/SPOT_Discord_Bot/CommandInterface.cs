@@ -20,6 +20,7 @@ namespace SPOT_Discord_Bot;
 public class CommandInterface
 {
     private readonly OpenAIService _openAiService;
+    private readonly SpotifyService _spotifyService;
     private readonly ILogger<CommandInterface> _logger;
 
     /**
@@ -28,9 +29,10 @@ public class CommandInterface
      *          - openAiService: Backend service that handles prompt expansion using GPT.
      *          - logger: Logger scoped to this interface for observability and debugging.
      */
-    public CommandInterface(OpenAIService openAiService, ILogger<CommandInterface> logger)
+    public CommandInterface(OpenAIService openAiService, SpotifyService spotifyService, ILogger<CommandInterface> logger)
     {
         _openAiService = openAiService;
+        _spotifyService = spotifyService;
         _logger = logger;
     }
 
@@ -48,10 +50,50 @@ public class CommandInterface
      * RETURN:
      *          - str: A GPT-generated string expanding the input "vibe" into a list of moods, genres, or artists.
      */
-    public async Task<string> HandleVibeAsync(RequestModel request)
+    public async Task<List<string>> HandleVibeAsync(RequestModel request)
     {
         _logger.LogInformation("Processing vibe request for user {User}", request.Username);
-        var expandedPrompt = await _openAiService.ExpandPromptAsync(request);
-        return expandedPrompt;
+
+        string expanded = await _openAiService.ExpandPromptAsync(request);
+        var artistSongs = ParseArtistSongMap(expanded);
+
+        _spotifyService.LoadAccessTokenFromFile();
+
+        var tracks = await _spotifyService.SearchTracksWithFallbackAsync(
+            _spotifyService.AccessToken, artistSongs);
+
+        
+        _logger.LogInformation("Sending {Count} tracks to user {User}", tracks.Count, request.Username);
+        _logger.LogDebug("Track list for user {User}:\n{Tracks}", request.Username, string.Join("\n", tracks));
+
+        return tracks;
+    }
+
+    
+    private Dictionary<string, List<string>> ParseArtistSongMap(string gptOutput)
+    {
+        var lines = gptOutput.Split('\n');
+        var result = new Dictionary<string, List<string>>();
+        string? currentArtist = null;
+
+        foreach (var line in lines.Select(l => l.Trim()))
+        {
+            if (!string.IsNullOrWhiteSpace(line) &&
+                !line.Contains(":") &&
+                !line.Contains("Genres") &&
+                !line.Contains("Artists") &&
+                !line.Contains("Songs"))
+            {
+                currentArtist = line;
+                if (!result.ContainsKey(currentArtist))
+                    result[currentArtist] = new List<string>();
+            }
+            else if (!string.IsNullOrWhiteSpace(line) && currentArtist != null)
+            {
+                result[currentArtist].Add(line);
+            }
+        }
+
+        return result;
     }
 }
