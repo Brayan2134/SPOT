@@ -94,27 +94,101 @@ public class SpotifyService
 
         return accessToken;
     }
+    
+    public async Task<bool> RefreshAccessTokenAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_refreshToken))
+        {
+            _logger.LogError("No refresh token available.");
+            return false;
+        }
 
+        var clientId = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_ID");
+        var clientSecret = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_SECRET");
 
+        var auth = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{clientSecret}"));
+
+        using var request = new HttpRequestMessage(HttpMethod.Post, "https://accounts.spotify.com/api/token");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Basic", auth);
+        request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            { "grant_type", "refresh_token" },
+            { "refresh_token", _refreshToken! }
+        });
+
+        var response = await _http.SendAsync(request);
+        var json = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            _logger.LogError("Failed to refresh access token: {Response}", json);
+            return false;
+        }
+
+        var doc = JsonDocument.Parse(json);
+        _accessToken = doc.RootElement.GetProperty("access_token").GetString();
+
+        if (doc.RootElement.TryGetProperty("refresh_token", out var newRefreshToken))
+        {
+            _refreshToken = newRefreshToken.GetString();
+        }
+
+        _logger.LogInformation("✅ Successfully refreshed access token.");
+        SaveTokensToFile("../../../etc/spotify_token.json");
+        return true;
+    }
+    
+    private void SaveTokensToFile(string path)
+    {
+        var payload = new
+        {
+            access_token = _accessToken,
+            refresh_token = _refreshToken
+        };
+
+        var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions { WriteIndented = true });
+        File.WriteAllText(path, json);
+
+        _logger.LogInformation("💾 Saved refreshed tokens to file.");
+    }
+    
     public async Task<List<string>> SearchTracksWithFallbackAsync(string accessToken, Dictionary<string, List<string>> artistSongMap)
     {
         var results = new List<string>();
 
-        foreach (var kvp in artistSongMap)
+        try
         {
-            string artist = kvp.Key;
-            foreach (string song in kvp.Value)
+            foreach (var kvp in artistSongMap)
             {
-                string url = await TrySearchAsync(accessToken, song, artist);
-                if (!string.IsNullOrEmpty(url))
+                string artist = kvp.Key;
+                foreach (string song in kvp.Value)
                 {
-                    results.Add(url);
+                    string url = await TrySearchAsync(_accessToken!, song, artist);
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        results.Add(url);
+                    }
                 }
             }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning("Spotify token might be expired. Attempting refresh...");
+
+            bool success = await RefreshAccessTokenAsync();
+            if (!success)
+            {
+                _logger.LogError("Unable to recover from expired token. Shutting down.");
+                Environment.Exit(1); // 👈 Force exit
+            }
+
+            // Retry once with new token
+            return await SearchTracksWithFallbackAsync(_accessToken!, artistSongMap);
         }
 
         return results;
     }
+
 
     private async Task<string> TrySearchAsync(string token, string song, string artist)
     {
