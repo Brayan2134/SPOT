@@ -53,18 +53,21 @@ public class VibeModule : InteractionModuleBase<SocketInteractionContext>
 
         try
         {
+            // Tell Discord "Hang tight, I’m working on it" to not timeout after 3 seconds
+            await DeferAsync(ephemeral: false);
+            
             // Backend request to expand the user query using OpenAI API
             string reply = await CommandInterface!.HandleVibeAsync(request);
             
             // Always respond to avoid a Discord timeout!!
-            await RespondAsync($"Here's your expanded vibe:\n{reply}");
+            await FollowupAsync($"Here's your expanded vibe:\n{reply}");
         }
         catch (Exception ex)
         {
             Logger?.LogError(ex, "Error while processing /vibe for user {User}", Context.User.Username);
 
             // Fallback response to ensure a graceful user experience
-            await RespondAsync("Sorry! Something went wrong while processing your vibe 🥲", ephemeral: true);
+            await FollowupAsync("Sorry! Something went wrong while processing your vibe!", ephemeral: true);
         }
     }
 }

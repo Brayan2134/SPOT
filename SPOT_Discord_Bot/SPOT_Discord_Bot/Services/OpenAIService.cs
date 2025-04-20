@@ -62,14 +62,34 @@ public class OpenAIService
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
             // STEP 3: Build the full user prompt
-            // The prompt includes a base system instruction and the user’s original query
-            string systemPrompt = "You are a playlist assistant. Expand this user vibe into a list of moods, genres, or artist styles:";
-            string fullPrompt = $"{systemPrompt} \"{request.Query}\"";
+            string fullPrompt = $@"You're a music discovery assistant. The user will give a vibe or mood, and you will do the following:
+
+                1. Expand the vibe into 3–5 relevant genres or subgenres.
+                2. Suggest 1–2 well-known or emerging artists per genre.
+                3. Recommend 1–2 songs per artist that match the mood.
+
+                Respond using this clear, structured Markdown format:
+
+                ### Genres:
+                - Genre1
+                - Genre2
+
+                ### Artists:
+                **Genre1**
+                - Artist A
+                - Artist B
+
+                ### Songs:
+                **Artist A**
+                - Song 1
+                - Song 2
+
+                Now here's the vibe: \'{request.Query}\'";
 
             // STEP 4: Format the request body in the structure required by OpenAI's Chat API
             var requestBody = new
             {
-                model = "gpt-3.5-turbo", // NOTE: You can upgrade to "gpt-4" if needed
+                model = "o4-mini", // NOTE: You can change to other models
                 messages = new[]
                 {
                     new { role = "user", content = fullPrompt }
