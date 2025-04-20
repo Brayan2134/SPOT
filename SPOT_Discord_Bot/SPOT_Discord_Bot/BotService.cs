@@ -49,31 +49,44 @@ public class BotService
     {
         _client.Log += HandleDiscordLog;
 
+        // ENSURE ENV VARS ARE SETUP AND INITIATED
         var token = Environment.GetEnvironmentVariable("DISCORD_TOKEN");
         if (string.IsNullOrWhiteSpace(token))
         {
             _logger.LogError("DISCORD_TOKEN environment variable not found.");
             return;
         }
-
+        
+        // STEP 1: Initialize the Discord InteractionService
         var interactionService = new InteractionService(_client.Rest);
+        
+        // STEP 2: Initialize the InteractionHandler to wire up command routing
         var interactionHandler = new InteractionHandler(_client, interactionService, _logger);
+        
+        // STEP 3: Create loggers for individual service layers
         var vibeLogger = _loggerFactory.CreateLogger<VibeModule>();
-        
-        SPOT_Discord_Bot.Modules.VibeModule.Logger = vibeLogger;
-        
         var openAiLogger = _loggerFactory.CreateLogger<OpenAIService>();
         var commandLogger = _loggerFactory.CreateLogger<CommandInterface>();
+        
+        // STEP 4: Manually instantiate services (OpenAI -> CommandInterface)
+        // NOTE: This bypasses dependency injection but keeps it modular and testable
         var openAiService = new OpenAIService(openAiLogger);
         var commandInterface = new CommandInterface(openAiService, commandLogger);
-        SPOT_Discord_Bot.Modules.VibeModule.CommandInterface = commandInterface;
-
         
+        // STEP 5: Assign the static logger for the VibeModule (Discord-facing commands)
+        SPOT_Discord_Bot.Modules.VibeModule.Logger = vibeLogger;
+        
+        // STEP 6: Inject the service bridge into VibeModule to allow it to route requests
+        SPOT_Discord_Bot.Modules.VibeModule.CommandInterface = commandInterface;
+        
+        // STEP 7: Register all slash commands defined in modules like VibeModule.cs
         await interactionHandler.InitializeAsync();
 
+        // STEP 8: Log into Discord and start listening
         await _client.LoginAsync(TokenType.Bot, token);
         await _client.StartAsync();
 
+        // STEP 9: Wait for bot to be ready, then register commands globally
         _client.Ready += async () =>
         {
             _logger.LogInformation("Bot is connected and ready.");
