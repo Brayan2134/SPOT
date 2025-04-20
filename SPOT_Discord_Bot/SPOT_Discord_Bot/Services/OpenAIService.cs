@@ -62,27 +62,20 @@ public class OpenAIService
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
             // STEP 3: Build the full user prompt
-            string fullPrompt = $@"You're a music discovery assistant. The user will give a vibe or mood, and you will do the following:
+            string fullPrompt = $@"You're a music discovery assistant. The user will give you a vibe or mood. Based on that, your job is to:
 
-                1. Expand the vibe into 3–5 relevant genres or subgenres.
-                2. Suggest 1–2 well-known or emerging artists per genre.
-                3. Recommend 1–2 songs per artist that match the mood.
+                Your task is to return **3-5 songs** that match this vibe. The songs can be from any genre or era, but should fit the mood well.
 
-                Respond using this clear, structured Markdown format:
-
-                ### Genres:
-                - Genre1
-                - Genre2
-
-                ### Artists:
-                **Genre1**
-                - Artist A
-                - Artist B
+                Please format your response **exactly** like this:
 
                 ### Songs:
-                **Artist A**
-                - Song 1
-                - Song 2
+                - Song Title 1 - Artist Name
+                - Song Title 2 - Artist Name
+                - Song Title 3 - Artist Name
+                ...
+                - Song Title 15 - Artist Name
+
+                Only include song title and artist. No album names, no links, no commentary.
 
                 Now here's the vibe: \'{request.Query}\'";
 

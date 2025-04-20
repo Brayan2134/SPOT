@@ -74,23 +74,23 @@ public class CommandInterface
     {
         var lines = gptOutput.Split('\n');
         var result = new Dictionary<string, List<string>>();
-        string? currentArtist = null;
 
-        foreach (var line in lines.Select(l => l.Trim()))
+        foreach (var line in lines)
         {
-            if (!string.IsNullOrWhiteSpace(line) &&
-                !line.Contains(":") &&
-                !line.Contains("Genres") &&
-                !line.Contains("Artists") &&
-                !line.Contains("Songs"))
+            var trimmed = line.Trim().TrimStart('-').Trim();
+            if (string.IsNullOrWhiteSpace(trimmed)) continue;
+
+            // Expecting format: Song Title - Artist Name
+            var parts = trimmed.Split(" - ", 2);
+            if (parts.Length == 2)
             {
-                currentArtist = line;
-                if (!result.ContainsKey(currentArtist))
-                    result[currentArtist] = new List<string>();
-            }
-            else if (!string.IsNullOrWhiteSpace(line) && currentArtist != null)
-            {
-                result[currentArtist].Add(line);
+                var song = parts[0].Trim();
+                var artist = parts[1].Trim();
+
+                if (!result.ContainsKey(artist))
+                    result[artist] = new List<string>();
+
+                result[artist].Add(song);
             }
         }
 
