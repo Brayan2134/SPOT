@@ -13,5 +13,6 @@ namespace SPOT_Discord_Bot.Modules;
 
 public class RequestModel
 {
-    
+    public string Query { get; set; } = "";
+    public string Username { get; set; } = "";
 }

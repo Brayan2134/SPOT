@@ -14,6 +14,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
 using Discord.Interactions;
 using SPOT_Discord_Bot.Modules;
+using SPOT_Discord_Bot.Services;
 
 namespace SPOT_Discord_Bot;
 
@@ -60,6 +61,14 @@ public class BotService
         var vibeLogger = _loggerFactory.CreateLogger<VibeModule>();
         
         SPOT_Discord_Bot.Modules.VibeModule.Logger = vibeLogger;
+        
+        var openAiLogger = _loggerFactory.CreateLogger<OpenAIService>();
+        var commandLogger = _loggerFactory.CreateLogger<CommandInterface>();
+        var openAiService = new OpenAIService(openAiLogger);
+        var commandInterface = new CommandInterface(openAiService, commandLogger);
+        SPOT_Discord_Bot.Modules.VibeModule.CommandInterface = commandInterface;
+
+        
         await interactionHandler.InitializeAsync();
 
         await _client.LoginAsync(TokenType.Bot, token);

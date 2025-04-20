@@ -11,9 +11,27 @@
  *   - Standardizes all backend input/output formats
  *   - Designed to be frontend-agnostic for potential web or CLI interfaces
  */
+using SPOT_Discord_Bot.Modules;
+using SPOT_Discord_Bot.Services;
+using Microsoft.Extensions.Logging;
+
 namespace SPOT_Discord_Bot;
 
 public class CommandInterface
 {
-    
+    private readonly OpenAIService _openAiService;
+    private readonly ILogger<CommandInterface> _logger;
+
+    public CommandInterface(OpenAIService openAiService, ILogger<CommandInterface> logger)
+    {
+        _openAiService = openAiService;
+        _logger = logger;
+    }
+
+    public async Task<string> HandleVibeAsync(RequestModel request)
+    {
+        _logger.LogInformation("Processing vibe request for user {User}", request.Username);
+        var expandedPrompt = await _openAiService.ExpandPromptAsync(request);
+        return expandedPrompt;
+    }
 }
