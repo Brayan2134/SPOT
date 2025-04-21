@@ -63,7 +63,7 @@ public class VibeModule : InteractionModuleBase<SocketInteractionContext>
             string reply = string.Join("\n", trackList);
             
             // Always respond to avoid a Discord timeout!!
-            await FollowupAsync($"Here's your expanded vibe:\n{reply}");
+            await FollowupAsync($"Here's your expanded vibe: \"{query}\" \n{reply}");
         }
         catch (Exception ex)
         {

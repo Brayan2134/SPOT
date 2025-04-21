@@ -9,7 +9,6 @@
  *   - Should be async and isolated from Discord dependencies
  *   - Future: can include prompt templating or fine-tuning integration
  */
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;

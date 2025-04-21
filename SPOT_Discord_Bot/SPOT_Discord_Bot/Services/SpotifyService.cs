@@ -218,6 +218,10 @@ public class SpotifyService
         if (!response.IsSuccessStatusCode)
         {
             _logger.LogError($"Search error: {json}");
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                throw new UnauthorizedAccessException("Access token expired");
+            }
             return null;
         }
 
