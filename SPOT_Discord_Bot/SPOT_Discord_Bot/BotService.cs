@@ -63,6 +63,12 @@ public class BotService
         // STEP 2: Initialize the InteractionHandler to wire up command routing
         var interactionHandler = new InteractionHandler(_client, interactionService, _logger);
         
+        /*
+         * LANGUAGE FEATURE:
+         *                      - Generic Interfaces and Dependency Injection.
+         *                        ILogger<T> allows class-scoped logging without interfacing with the constructors for
+         *                        the below services.
+         */
         // STEP 3: Create loggers for individual service layers
         var vibeLogger = _loggerFactory.CreateLogger<VibeModule>();
         var openAiLogger = _loggerFactory.CreateLogger<OpenAIService>();

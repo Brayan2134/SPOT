@@ -21,6 +21,9 @@ namespace SPOT_Discord_Bot.Modules;
  * POST CONDITIONS:
  *          - Will be passed to CommandInterface and services like OpenAIService for processing.
  *          - Fields may be extended in the future for richer context (e.g., mood tags, request time).
+ * LANGUAGE FEATURE:
+ *          - Lightweight Record: Allows the functionality to create a data carrier with automatic properties.
+ *                                Exceptionally useful when getting data from APIs.
  */
 public class RequestModel
 {

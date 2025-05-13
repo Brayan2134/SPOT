@@ -19,6 +19,11 @@ public class VibeModule : InteractionModuleBase<SocketInteractionContext>
     // Static logger assigned at startup (for simplicity)
     public static ILogger<VibeModule>? Logger;
     
+    /*
+     * LANGUAGE FEATURE:
+     *                      - Static Members for Shared Access. Allows for singleton pattern use for when the module
+     *                        will be reused (making it very memory efficient.
+     */
     // Static CommandInterface to use the OPENAI and Spotify Services
     public static CommandInterface? CommandInterface;
     
@@ -39,6 +44,10 @@ public class VibeModule : InteractionModuleBase<SocketInteractionContext>
      * NOTES:
      *       - This method is UI-facing and represents the entry point from Discord to backend services.
      *       - It should remain lean, with all business logic delegated to backend service layers.
+     * LANGUAGE FEATURE:
+     *       - Attributes: Used to define metadata for methods and parameters.
+     *                     This is a powerful reflection-based feature in C# not commonly found in languages like Java or Python.
+     *                     Important since it enables declarative programming.
      */
     [SlashCommand("vibe", "Send a vibe and get a reply!")]
     public async Task HandleVibeCommand([Summary(description: "What kind of vibe are you feeling?")] string query)

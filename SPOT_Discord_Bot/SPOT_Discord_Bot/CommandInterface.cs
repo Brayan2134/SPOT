@@ -77,6 +77,11 @@ public class CommandInterface
 
         foreach (var line in lines)
         {
+            /*
+             * LANGUAGE FEATURE:
+             *                      - LINQ-like String parsing with .Trim() and .Split().
+             *                        Shows C#'s extensive and expressive syntax for string manipulation
+             */
             var trimmed = line.Trim().TrimStart('-').Trim();
             if (string.IsNullOrWhiteSpace(trimmed)) continue;
 

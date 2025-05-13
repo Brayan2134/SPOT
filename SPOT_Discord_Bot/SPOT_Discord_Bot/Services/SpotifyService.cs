@@ -54,6 +54,11 @@ public class SpotifyService
     
     public async Task<string> GetAccessTokenAsync(string code)
     {
+        /*
+         * LANGUAGE FEATURE:
+         *                      - Environment Variables: Can securely read and utilize secrets.
+         *                                               Aligns with modern security standards.
+         */
         var clientId = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_ID");
         var clientSecret = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_SECRET");
         var redirectUri = Environment.GetEnvironmentVariable("SPOTIFY_REDIRECT_URL");
